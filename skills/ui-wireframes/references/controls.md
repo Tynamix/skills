@@ -118,6 +118,18 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 
 ---
 
+## Mobile patterns
+
+**Tab bar** (bottom, 390 wide): rectangle at `(frame.x, frame.y + 780)`, width 390, height 64, fill `#f1f3f5`. Four or five items at x offsets 8/88/168/248/328 (for 4): each a 24×24 dashed icon placeholder at `item.x + 28, bar.y + 8` with a 12px label beneath at `bar.y + 36`. Active item: dark icon border + dark label; inactive: gray `#868e96`.
+
+**Sticky bottom CTA**: primary button (see Actions) at `(frame.x + 16, frame.y + 772)`, width 358, height 48.
+
+**Bottom sheet**: dim backdrop like Modal; sheet = rounded rectangle width 390 (full frame width) anchored at the bottom edge, height ≈ 320 (`y = frame.y + 524`), with a grabber: 40×4 line-equivalent (small rounded rect 40×4, fill `#ced4da`) centered at `sheet.y + 12`. Content: title 20px at `sheet.y + 32`, rows or buttons below.
+
+**List row with chevron** (mobile settings-style): row height 56, 16px label at left (`x + 16, row.y + 18`), optional 16px gray value right-aligned, chevron at the right edge: `{"type":"line","x":frame.x+354,"y":row.y+20,"points":[[0,0],[8,8]]}` + `{"type":"line","x":frame.x+362,"y":row.y+28,"points":[[0,0],[-8,8]]}`. Rows separated by full-width lines.
+
+---
+
 ## Composition rule (extensibility)
 
 If a control you need is missing: compose it from the primitives in this file's **style** — 1px-look strokes (`strokeWidth` 2 default is fine), grayscale palette from layout.md, 8px grid, overlay text labels. Then tell the user the control was improvised and is missing upstream in the skill, so it can be added to this file.

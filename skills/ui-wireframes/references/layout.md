@@ -53,6 +53,15 @@ Use the text width estimates from controls.md. No `containerId` binding — over
 - Content area: y = 160..860, x = 96..1344 (96px side margins) — or a 2-column split at x = 96 / x = 736 with 48 gutter.
 - Footer: y = 860.
 
+## Common content regions (mobile, 390×844)
+
+- Status / top bar: y = 0..48 — title 20px centered at y = 12, optional back chevron or action text at the edges (x = 16 / right-aligned).
+- Content: single column, 16px side margins (x = 16..374). Inputs, buttons and selects span the full content width (358).
+- Vertical rhythm: title 24px at y = 64; sections separated by 24–32; form fields label(20) + 8 + input(44) + 16.
+- Tab bar: y = 780..844 (see controls.md). With a tab bar, content ends at y = 772.
+- Sticky bottom CTA: button at y = 772, height 48, width 358 (see controls.md).
+- Bottom sheet: anchored to the bottom edge (see controls.md).
+
 ## Canvas hygiene
 
 - Keep all screens' frames non-overlapping; arrows live in the 160px gaps.

@@ -12,11 +12,12 @@ Output is a `.excalidraw` file written directly as **minimal JSON**. Excalidraw'
 ## Workflow
 
 1. **Clarify the screens.** From the request, list the screens, any branches (multiple paths leaving one screen, e.g. a dashboard linking to several pages), and the flow between them. If the request is ambiguous about which screens exist, ask before drawing.
-2. **Choose the output path.** Derive it from the prompt's context (an attached file, an open folder, a named location). If unclear, ask the user where to put the file. Suggest a `<name>.excalidraw` filename.
-3. **Load references as needed.** Read [references/layout.md](references/layout.md) before placing anything; read [references/controls.md](references/controls.md) for the exact minimal-JSON template of every control you use. Do not invent control geometry from memory.
-4. **Write the file** following layout.md arithmetic.
-5. **Run the self-check** below before reporting done.
-6. Tell the user: open the file with the `pomdtr.excalidraw-editor` VS Code extension (recommended) or drag it onto excalidraw.com — it is fully editable there.
+2. **Decide the form factor.** Derive it from the request ("mobile view", app context, explicit device names). Default to **desktop** when unspecified and say so in your reply; ask only when both factors are genuinely plausible. A file may mix factors (e.g. a mobile variant in its own row).
+3. **Choose the output path.** Derive it from the prompt's context (an attached file, an open folder, a named location). If unclear, ask the user where to put the file. Suggest a `<name>.excalidraw` filename.
+4. **Load references as needed.** Read [references/layout.md](references/layout.md) before placing anything; read [references/controls.md](references/controls.md) for the exact minimal-JSON template of every control you use. Do not invent control geometry from memory.
+5. **Write the file** following layout.md arithmetic.
+6. **Run the self-check** below before reporting done.
+7. Tell the user: open the file with the `pomdtr.excalidraw-editor` VS Code extension (recommended) or drag it onto excalidraw.com — it is fully editable there.
 
 ## Iteration
 
