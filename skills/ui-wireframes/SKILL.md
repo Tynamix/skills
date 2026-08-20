@@ -11,7 +11,7 @@ Output is a `.excalidraw` file written directly as **minimal JSON**. Excalidraw'
 
 ## Workflow
 
-1. **Clarify the screens.** From the request, list the screens and the flow between them. If the request is ambiguous about which screens exist, ask before drawing.
+1. **Clarify the screens.** From the request, list the screens, any branches (multiple paths leaving one screen, e.g. a dashboard linking to several pages), and the flow between them. If the request is ambiguous about which screens exist, ask before drawing.
 2. **Choose the output path.** Derive it from the prompt's context (an attached file, an open folder, a named location). If unclear, ask the user where to put the file. Suggest a `<name>.excalidraw` filename.
 3. **Load references as needed.** Read [references/layout.md](references/layout.md) before placing anything; read [references/controls.md](references/controls.md) for the exact minimal-JSON template of every control you use. Do not invent control geometry from memory.
 4. **Write the file** following layout.md arithmetic.
@@ -45,6 +45,7 @@ The `.excalidraw` file is **shared state with the human**. Once saved from a can
 - [ ] IDs unique
 - [ ] Grayscale only
 - [ ] Controls recognizable as their type (check against controls.md templates)
+- [ ] Every screen label carries its scene number; branching screens follow the layout.md branching rules
 - [ ] If iterating: diff contains only intended changes; no untouched element was reformatted
 
 ## Token discipline

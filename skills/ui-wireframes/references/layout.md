@@ -21,7 +21,7 @@
 ## Screens
 
 - Desktop frame: **1440×900**. Mobile frame: **390×844**. Frame fill `#ffffff`.
-- Screen name: 16px gray (`#868e96`) text **above** the frame at `(frame.x, frame.y − 28)`.
+- Screen label: 16px gray (`#868e96`) text **above** the frame at `(frame.x, frame.y − 28)`, formatted `"<number> · <name>"` — see Branching flows.
 - Arrange screens **left → right** with **160px** horizontal gap (mobile too — consistency beats platform aesthetics).
 - After **4 screens**, wrap to a new row: `y += 900 + 200` (or 844 + 200 for mobile), restart `x` at the first screen's `x`.
 - First screen starts at a round origin like (0, 0).
@@ -29,8 +29,16 @@
 ## Flow arrows
 
 - Connect screens in reading order: plain `arrow` from right edge of screen A (mid-height) to left edge of screen B, e.g. `{"id":"a1","type":"arrow","x":1440,"y":450,"points":[[0,0],[160,0]]}`.
-- Optional 16px gray label above the arrow midpoint naming the trigger ("click Continue").
+- 16px gray label above the arrow midpoint naming the trigger ("click Continue"). Required when a screen has more than one outgoing arrow, optional otherwise.
 - No `startBinding`/`endBinding` — unbound arrows are intentional (cheaper, and restore repairs them to null).
+
+## Branching flows
+
+A screen can have **several outgoing paths** (e.g. a dashboard linking to different pages). Numbers give every screen a stable reference; the arrows express the topology.
+
+- **Scene numbers**: main path = 1, 2, 3… The branch row of screen N holds its destinations as N.1, N.2… left→right — whether they are alternative destinations or linear continuations. Deeper nesting recurses (branches of 2.3 → 2.3.1, 2.3.2).
+- **Placement**: the branch row of screen S sits **below S's row** (`y = S.y + frameHeight + 200`), starting at `S.x`, extending right with the normal 160px gap. If several screens on one row branch, their branch rows stack in the reading order of their source screens.
+- **Branch arrows**: one labeled arrow per outgoing path. Vertical from S's bottom edge to the branch screen's top edge, x aligned to the branch's center: `{"type":"arrow","x":<branchCenterX>,"y":<S.y+900>,"points":[[0,0],[0,200]]}`. If the branch screen sits beyond S's right edge, use a single-bend elbow from S's right edge: `"points":[[0,0],[dx,0],[dx,dy]]`. Never route an arrow across a screen frame.
 
 ## Labels on shapes
 

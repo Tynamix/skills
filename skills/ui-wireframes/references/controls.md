@@ -79,7 +79,7 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 
 ## Structure & navigation
 
-**Screen frame**: `{"id":"f1","type":"rectangle","x":0,"y":0,"width":1440,"height":900,"backgroundColor":"#ffffff"}` + screen name as 16px gray text at `x`, `y - 28`. Mobile: 390×844.
+**Screen frame**: `{"id":"f1","type":"rectangle","x":0,"y":0,"width":1440,"height":900,"backgroundColor":"#ffffff"}` + screen label as 16px gray text at `x`, `y - 28`, formatted `"<number> · <name>"` (see layout.md → Branching flows). Mobile: 390×844.
 
 **Nav bar**: rectangle full screen width × 64, fill `#f1f3f5`; logo placeholder left (small dark square 32×32 or short bold text), links as 16px text spaced 32 apart.
 

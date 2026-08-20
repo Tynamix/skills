@@ -13,11 +13,15 @@ A high-fidelity visual design (color, typography, branding). Explicitly out of s
 _Avoid_: Design, High-Fidelity-Entwurf
 
 **Screen**:
-One page or view inside a wireframe file, drawn as a labeled frame (desktop or mobile size).
+One page or view inside a wireframe file, drawn as a labeled frame (desktop or mobile size). Screens carry a scene number ("2 · Dashboard"); branch screens use dotted numbers ("2.1 · Reports").
+_Avoid_: Scene, Page
 
 **Flow**:
-A multi-screen journey (e.g. a checkout) shown as several Screens on one canvas, connected by arrows in reading order.
+A multi-screen journey shown as several Screens on one canvas, connected by labeled arrows. A Screen may have several outgoing paths (see Branch).
 _Avoid_: Journey, Bestellstrecke
+
+**Branch**:
+An alternative path departing from a Screen in a Flow (e.g. a dashboard linking to several pages). Branch screens sit on a row below their source Screen and share its number as a dotted prefix (2.1, 2.2).
 
 **Control**:
 A recognizable UI element inside a Screen (button, input, checkbox, toggle, …). Controls have named visual states where relevant (e.g. checkbox checked/unchecked).
