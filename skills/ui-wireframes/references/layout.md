@@ -1,0 +1,51 @@
+# Layout arithmetic
+
+## Grid & spacing
+
+- Everything snaps to the **8px grid**: all `x`, `y`, `width`, `height` are multiples of 8 (exception: 4px nudges for checkmarks/chevrons inside a control).
+- Spacing scale: **8 / 16 / 24 / 32 / 48**. Inner padding of containers: 24. Between related elements: 8–16. Between sections: 32–48.
+- Prefer uniform gaps over pixel-perfect art: same gap everywhere reads as intentional.
+
+## Palette (grayscale only)
+
+| Use | Hex |
+|---|---|
+| Strokes, primary text | `#1e1e1e` |
+| Secondary text, placeholders, inactive | `#868e96` |
+| Subtle fill (nav bar, table header) | `#f1f3f5` |
+| Placeholder fill (images), toggle off | `#e9ecef` |
+| Avatar fill | `#ced4da` |
+| Primary action fill (button, toggle on, active step) | `#343a40` |
+| Surface (screen, card, input) | `#ffffff` |
+
+## Screens
+
+- Desktop frame: **1440×900**. Mobile frame: **390×844**. Frame fill `#ffffff`.
+- Screen name: 16px gray (`#868e96`) text **above** the frame at `(frame.x, frame.y − 28)`.
+- Arrange screens **left → right** with **160px** horizontal gap (mobile too — consistency beats platform aesthetics).
+- After **4 screens**, wrap to a new row: `y += 900 + 200` (or 844 + 200 for mobile), restart `x` at the first screen's `x`.
+- First screen starts at a round origin like (0, 0).
+
+## Flow arrows
+
+- Connect screens in reading order: plain `arrow` from right edge of screen A (mid-height) to left edge of screen B, e.g. `{"id":"a1","type":"arrow","x":1440,"y":450,"points":[[0,0],[160,0]]}`.
+- Optional 16px gray label above the arrow midpoint naming the trigger ("click Continue").
+- No `startBinding`/`endBinding` — unbound arrows are intentional (cheaper, and restore repairs them to null).
+
+## Labels on shapes
+
+Overlay text, centered by arithmetic:
+`text.x = shape.x + (shape.width − text.width) / 2` (snap to grid), `text.y = shape.y + (shape.height − text.height) / 2`.
+Use the text width estimates from controls.md. No `containerId` binding — overlay is the convention.
+
+## Common content regions (desktop)
+
+- Nav bar: y = 0..64 (see controls.md).
+- Page title: y = 104 (nav 64 + 40 gap).
+- Content area: y = 160..860, x = 96..1344 (96px side margins) — or a 2-column split at x = 96 / x = 736 with 48 gutter.
+- Footer: y = 860.
+
+## Canvas hygiene
+
+- Keep all screens' frames non-overlapping; arrows live in the 160px gaps.
+- IDs: short, readable, unique — `f1`, `nav1`, `btnSave`, `t2`. Reuse a prefix per screen (`s1-…`, `s2-…`) in multi-screen files so iterations stay greppable.
