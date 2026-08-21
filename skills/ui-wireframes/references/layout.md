@@ -8,15 +8,15 @@
 
 ## Palette (grayscale only)
 
-| Use | Hex |
-|---|---|
-| Strokes, primary text | `#1e1e1e` |
-| Secondary text, placeholders, inactive | `#868e96` |
-| Subtle fill (nav bar, table header) | `#f1f3f5` |
-| Placeholder fill (images), toggle off | `#e9ecef` |
-| Avatar fill | `#ced4da` |
+| Use                                                  | Hex       |
+|------------------------------------------------------|-----------|
+| Strokes, primary text                                | `#1e1e1e` |
+| Secondary text, placeholders, inactive               | `#868e96` |
+| Subtle fill (nav bar, table header)                  | `#f1f3f5` |
+| Placeholder fill (images), toggle off                | `#e9ecef` |
+| Avatar fill                                          | `#ced4da` |
 | Primary action fill (button, toggle on, active step) | `#343a40` |
-| Surface (screen, card, input) | `#ffffff` |
+| Surface (screen, card, input)                        | `#ffffff` |
 
 ## Screens
 
@@ -42,9 +42,11 @@ A screen can have **several outgoing paths** (e.g. a dashboard linking to differ
 
 ## Labels on shapes
 
-Overlay text, centered by arithmetic:
-`text.x = shape.x + (shape.width − text.width) / 2` (snap to grid), `text.y = shape.y + (shape.height − text.height) / 2`.
-Use the text width estimates from controls.md. No `containerId` binding — overlay is the convention.
+A label centered in a shape is **not** positioned by arithmetic on the text width — that estimate is exactly what produces clipped labels. Give the text element the shape's `x` and `width` and set `"textAlign": "center"`:
+
+`label.x = shape.x`, `label.width = shape.width`, `label.y = shape.y + (shape.height − textHeight) / 2`
+
+Left-aligned text inside a container sits at `container.x + padding` and needs the clip-width estimate from controls.md → Text sizing. No `containerId` binding — overlay is the convention.
 
 ## Common content regions (desktop)
 
@@ -65,4 +67,5 @@ Use the text width estimates from controls.md. No `containerId` binding — over
 ## Canvas hygiene
 
 - Keep all screens' frames non-overlapping; arrows live in the 160px gaps.
-- IDs: short, readable, unique — `f1`, `nav1`, `btnSave`, `t2`. Reuse a prefix per screen (`s1-…`, `s2-…`) in multi-screen files so iterations stay greppable.
+- IDs: short, readable, unique, and **greppable** — `s2-nav-logo`, `s2-form-email-input`, `s2-btn-save`. Pattern: `s<scene>-<region>-<name>[-part]`, where `<scene>` matches the screen's scene number with dots replaced by `_` (`s2_1-…`). Iteration finds elements by ID with a text search instead of reading the file (see [iteration.md](iteration.md)), so a guessable ID is worth more than a short one.
+- One element per line in the JSON, screens separated by a blank line. Line-addressable files can be patched line by line.

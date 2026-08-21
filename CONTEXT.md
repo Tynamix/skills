@@ -26,3 +26,14 @@ An alternative path departing from a Screen in a Flow (e.g. a dashboard linking 
 **Control**:
 A recognizable UI element inside a Screen (button, input, checkbox, toggle, …). Controls have named visual states where relevant (e.g. checkbox checked/unchecked).
 _Avoid_: Widget, Komponente
+
+**Clip width**:
+The `width` written on an Excalidraw text element. It bounds the canvas the glyphs are rendered into, so text beyond it is cut off — it is not a measurement of the text. Always over-estimated (see ADR-0002).
+_Avoid_: Text width, Textbreite
+
+**Ink width**:
+The width the glyphs of a label actually occupy on screen. Used to size the shape around a label and to space neighbouring text. Distinct from Clip width.
+
+**Map**:
+The `<name>.map.md` sidecar next to a wireframe file: a small table of Screens, id prefixes and contents that lets an agent decide what to patch without reading the `.excalidraw` (see ADR-0003). An index, never the source of truth.
+_Avoid_: Manifest, Index, Inhaltsverzeichnis

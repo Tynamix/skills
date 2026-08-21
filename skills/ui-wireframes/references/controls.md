@@ -2,34 +2,62 @@
 
 One template per control, built from five primitives: `rectangle`, `ellipse`, `diamond`, `text`, `line`, `arrow`. Copy a template, set `x`/`y` (and text), adjust `width`/`height` per the sizing rules. Coordinates below assume origin (0,0) — translate everything by your target origin.
 
-Text width estimates at fontSize 20 (Excalifont): `width ≈ 8.8 × characters + 10`, height 25. At fontSize 16: `width ≈ 7 × characters + 8`, height 20. Prefer slightly too wide over too narrow.
-
 Rounding: rectangles default to sharp corners; add `"roundness": {"type": 3}` where the template says rounded.
+
+---
+
+## Text sizing (read before writing any text element)
+
+A text element's `width`/`height` is a **clipping box**, not a layout box. Excalidraw draws the glyphs at their real metric width but caches the element in a canvas of exactly `width × height`, so anything beyond gets **cut off mid-word** (`"Add Jira Data Center"` → `Add Jira Data Cent`). This is the most common defect in generated wireframes. Too wide costs nothing visually; too narrow is broken.
+
+Two estimates for Excalifont, both rounded **up** to the next multiple of 8:
+
+| fontSize | `height` (line height) | **ink** per char — size containers with this | **clip** per char — the text element's `width` |
+|----------|------------------------|----------------------------------------------|------------------------------------------------|
+| 12       | 15                     | 8                                            | 10                                             |
+| 16       | 20                     | 10                                           | 13                                             |
+| 20       | 25                     | 13                                           | 16                                             |
+| 28       | 35                     | 18                                           | 23                                             |
+
+- `width = clipPerChar × charCount`, minimum 24. Count every character, spaces and punctuation included.
+- `ink = inkPerChar × charCount` approximates what is actually drawn — use it to size the shape around a label and to check that neighbouring text does not collide.
+- Other font sizes: `clipPerChar = 0.8 × fontSize`, `inkPerChar = 0.65 × fontSize`, `height = 1.25 × fontSize`.
+- One text element per line. Never put `\n` in `text`; if you do, `height = lines × lineHeight`.
+
+### Centered and right-aligned labels — never estimate
+
+For a label centered in a shape, do not compute an offset. Give the text element the **shape's `x` and `width`** and set `"textAlign": "center"` — Excalidraw centers the glyphs inside that box, so the estimate cannot be wrong:
+
+`label.x = shape.x`, `label.width = shape.width`, `label.y = shape.y + (shape.height − textHeight) / 2`
+
+Right-aligned: same box, `"textAlign": "right"`. Only left-aligned text (`x = container.x + padding`) needs the clip estimate.
+
+Keep `shape.width ≥ ink + 2 × padding`, otherwise the label clips at the shape's edge.
 
 ---
 
 ## Text primitives
 
-**Screen title** (28px): `{"id":"t1","type":"text","x":0,"y":0,"width":160,"height":35,"text":"Dashboard","fontSize":28,"fontFamily":5}`
+**Screen title** (28px): `{"id":"t1","type":"text","x":0,"y":0,"width":208,"height":35,"text":"Dashboard","fontSize":28,"fontFamily":5}` (9 chars × 23 = 207 → 208)
 
-**Body / paragraph line** (16px, gray): `{"id":"t2","type":"text","x":0,"y":0,"width":300,"height":20,"text":"Some descriptive text","fontSize":16,"fontFamily":5,"strokeColor":"#868e96"}`
+**Body / paragraph line** (16px, gray): `{"id":"t2","type":"text","x":0,"y":0,"width":280,"height":20,"text":"Some descriptive text","fontSize":16,"fontFamily":5,"strokeColor":"#868e96"}` (21 chars × 13 = 273 → 280)
 
-**Link** (16px, underlined): body text plus `"textDecoration": "underline"` — if in doubt, body text + a `line` 2px below it, width = text width.
+**Link** (16px, underlined): body text plus `"textDecoration": "underline"` — if in doubt, body text + a `line` 2px below it, width = the text's ink width.
 
 ---
 
 ## Actions
 
-**Button — primary** (dark fill, white label):
+**Button — primary** (dark fill, white centered label):
 
 ```json
-{"id":"b1","type":"rectangle","x":0,"y":0,"width":120,"height":44,"backgroundColor":"#343a40","roundness":{"type":3}},
-{"id":"b1l","type":"text","x":18,"y":10,"width":84,"height":25,"text":"Continue","fontSize":20,"fontFamily":5,"strokeColor":"#ffffff"}
+{"id":"b1","type":"rectangle","x":0,"y":0,"width":152,"height":44,"backgroundColor":"#343a40","roundness":{"type":3}},
+{"id":"b1l","type":"text","x":0,"y":10,"width":152,"height":25,"text":"Continue","fontSize":20,"fontFamily":5,"textAlign":"center","strokeColor":"#ffffff"}
 ```
 
 **Button — secondary**: same, but `backgroundColor` `transparent`, label `strokeColor` `#1e1e1e`.
 
-Sizing: width = label width + 36 (18 padding each side), height 44. Center the label: `label.x = btn.x + 18`, `label.y = btn.y + 10`.
+Sizing: `width = ink + 48` (24 padding each side, e.g. "Continue" = 8 × 13 = 104 → 152), minimum 120, height 44. The label box mirrors the button box exactly (`x`, `width`) and is centered vertically at `btn.y + 10`.
 
 ---
 
@@ -39,8 +67,10 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 
 ```json
 {"id":"i1","type":"rectangle","x":0,"y":0,"width":280,"height":44,"backgroundColor":"#ffffff","roundness":{"type":3}},
-{"id":"i1p","type":"text","x":12,"y":12,"width":150,"height":20,"text":"Email address","fontSize":16,"fontFamily":5,"strokeColor":"#868e96"}
+{"id":"i1p","type":"text","x":12,"y":12,"width":176,"height":20,"text":"Email address","fontSize":16,"fontFamily":5,"strokeColor":"#868e96"}
 ```
+
+The placeholder box may extend past the input's right edge in the JSON — harmless, since the clip box is invisible. But keep the *ink* inside the input: `input.width ≥ ink + 24`.
 
 **Textarea**: input with height 120 and the placeholder top-left (`y + 12`).
 
@@ -81,13 +111,13 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 
 **Screen frame**: `{"id":"f1","type":"rectangle","x":0,"y":0,"width":1440,"height":900,"backgroundColor":"#ffffff"}` + screen label as 16px gray text at `x`, `y - 28`, formatted `"<number> · <name>"` (see layout.md → Branching flows). Mobile: 390×844.
 
-**Nav bar**: rectangle full screen width × 64, fill `#f1f3f5`; logo placeholder left (small dark square 32×32 or short bold text), links as 16px text spaced 32 apart.
+**Nav bar**: rectangle full screen width × 64, fill `#f1f3f5`; logo placeholder left (small dark square 32×32 or short bold text), links as 16px text, next link starts at `previous.x + ink + 32`.
 
-**Tabs**: row of 16px labels spaced 24; active tab gets a `line` underline (width = label width, y = label.y + 24), inactive tabs gray `#868e96`.
+**Tabs**: row of 16px labels, next label at `previous.x + ink + 24`; the active tab gets a `line` underline (width = its ink width, y = label.y + 24), inactive tabs gray `#868e96`.
 
 **Breadcrumb**: 16px labels joined by `" / "` text separators, all gray except last segment dark.
 
-**Pagination**: row of 28×28 rounded squares (fill `#f1f3f5`, active `#343a40` with white number), 8 apart, each with a centered 16px digit.
+**Pagination**: row of 28×28 rounded squares (fill `#f1f3f5`, active `#343a40` with white number), 8 apart, each with a 16px digit as a centered label (text box = square box, `"textAlign":"center"`).
 
 **Card**: `backgroundColor` `#ffffff`, `"roundness":{"type":3}`, padding 24 inside; typical size 320×200.
 
@@ -97,9 +127,9 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 
 **List**: stacked rows (height 56) separated by lines; optional avatar + two text lines per row.
 
-**Badge**: small rounded rectangle (height 22, fill `#e9ecef`, width = 12px text width + 20) with 12px dark text centered. For 12px text: `width ≈ 5.4 × chars + 6`, height 15.
+**Badge**: small rounded rectangle (height 22, fill `#e9ecef`, `width = ink(12px) + 24`) with 12px dark text as a centered label (text box = badge box).
 
-**Toast**: rounded dark rectangle (`#343a40`, height 48, width ≈ 320) with white 16px text, typically bottom-center of a screen.
+**Toast**: rounded dark rectangle (`#343a40`, height 48, `width = ink(16px) + 48`, minimum 320) with white 16px text as a centered label, typically bottom-center of a screen.
 
 **Tooltip**: small dark rounded rectangle with white 12px text, placed above its target.
 
@@ -114,13 +144,13 @@ Sizing: width = label width + 36 (18 padding each side), height 44. Center the l
 {"id":"p1x2","type":"line","x":0,"y":H,"points":[[0,0],[W,-H]]}
 ```
 
-**Stepper** (multi-step progress): circles 32×32 per step, 16px label beneath each; done steps: fill `#343a40`, white number; current: white fill, thick ring (`"strokeWidth": 4`); upcoming: fill `#e9ecef`, gray number. Connect circles with horizontal lines between circle edges.
+**Stepper** (multi-step progress): circles 32×32 per step, each with its number as a centered label (text box = circle box); a 16px caption beneath each, also centered on the circle box but widened symmetrically (`x = circle.x − (w − 32) / 2`) so long captions are not clipped. Done steps: fill `#343a40`, white number; current: white fill, thick ring (`"strokeWidth": 4`); upcoming: fill `#e9ecef`, gray number. Connect circles with horizontal lines between circle edges.
 
 ---
 
 ## Mobile patterns
 
-**Tab bar** (bottom, 390 wide): rectangle at `(frame.x, frame.y + 780)`, width 390, height 64, fill `#f1f3f5`. Four or five items at x offsets 8/88/168/248/328 (for 4): each a 24×24 dashed icon placeholder at `item.x + 28, bar.y + 8` with a 12px label beneath at `bar.y + 36`. Active item: dark icon border + dark label; inactive: gray `#868e96`.
+**Tab bar** (bottom, 390 wide): rectangle at `(frame.x, frame.y + 780)`, width 390, height 64, fill `#f1f3f5`. Four items, each an 80-wide slot at x offsets 8/88/168/248 (add 328 for five): a 24×24 dashed icon placeholder at `item.x + 28, bar.y + 8`, and a 12px label beneath at `bar.y + 36` as a centered label over the 80-wide slot. Active item: dark icon border + dark label; inactive: gray `#868e96`.
 
 **Sticky bottom CTA**: primary button (see Actions) at `(frame.x + 16, frame.y + 772)`, width 358, height 48.
 
