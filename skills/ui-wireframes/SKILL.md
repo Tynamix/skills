@@ -45,6 +45,7 @@ Assume the human added or deleted elements between runs. Anything you did not au
 - [ ] Every text element: `width ≥ clipPerChar × charCount` (controls.md → Text sizing); every centered label carries `"textAlign": "center"` and its container's `x`/`width`
 - [ ] Every label's ink width fits inside its container (button, input, badge, cell)
 - [ ] Every arrow/line: `points` present and relative
+- [ ] Every arrow label fits its gap: `ink(label) + 32 ≤ gap` (layout.md → Flow arrows); the gap is uniform across the file and the label is centered over it, never over a frame
 - [ ] IDs unique
 - [ ] Grayscale only
 - [ ] Controls recognizable as their type (check against controls.md templates)

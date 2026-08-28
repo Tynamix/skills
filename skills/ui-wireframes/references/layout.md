@@ -22,15 +22,27 @@
 
 - Desktop frame: **1440×900**. Mobile frame: **390×844**. Frame fill `#ffffff`.
 - Screen label: 16px gray (`#868e96`) text **above** the frame at `(frame.x, frame.y − 28)`, formatted `"<number> · <name>"` — see Branching flows.
-- Arrange screens **left → right** with **160px** horizontal gap (mobile too — consistency beats platform aesthetics).
+- Arrange screens **left → right** with a **uniform horizontal gap**: 160px by default, widened for the whole file when an arrow label needs it (see Flow arrows). Same value for mobile — consistency beats platform aesthetics.
 - After **4 screens**, wrap to a new row: `y += 900 + 200` (or 844 + 200 for mobile), restart `x` at the first screen's `x`.
 - First screen starts at a round origin like (0, 0).
 
 ## Flow arrows
 
 - Connect screens in reading order: plain `arrow` from right edge of screen A (mid-height) to left edge of screen B, e.g. `{"id":"a1","type":"arrow","x":1440,"y":450,"points":[[0,0],[160,0]]}`.
-- 16px gray label above the arrow midpoint naming the trigger ("click Continue"). Required when a screen has more than one outgoing arrow, optional otherwise.
+- 16px gray (`#868e96`) label above the arrow naming the trigger ("click Continue"). Required when a screen has more than one outgoing arrow, optional otherwise.
 - No `startBinding`/`endBinding` — unbound arrows are intentional (cheaper, and restore repairs them to null).
+### Write the labels first, then size the gap
+
+A label that is wider than its gap spills over the neighbouring frame — the second most common defect after clipped text. The gap follows the labels, never the other way round.
+
+1. Write down every horizontal arrow label before placing screens.
+2. For each, `neededGap = ink(label) + 32` (ink per char from controls.md → Text sizing; 16px text ≈ 10px/char, so 160px holds ~12 characters — `"click Continue"` already needs 176).
+3. `gap = max(160, largest neededGap in the file)`, rounded up to a multiple of 8, and used for **every** horizontal gap. Compute all screen `x` values from that gap before writing any element.
+4. Arrow `points` span the same `gap`: `[[0,0],[gap,0]]`.
+
+Place the label with the centering trick instead of an offset: `x = arrow.x`, `width = gap`, `"textAlign": "center"`, `y = arrow.y − 28`.
+
+If a label would push the gap past ~280px, shorten it to verb + object ("Add integration tool from the catalog" → "Add tool") or stack it as two text elements at `y − 52` and `y − 28`, each centered over the gap and each sized by its own `neededGap`.
 
 ## Branching flows
 
@@ -39,6 +51,8 @@ A screen can have **several outgoing paths** (e.g. a dashboard linking to differ
 - **Scene numbers**: main path = 1, 2, 3… The branch row of screen N holds its destinations as N.1, N.2… left→right — whether they are alternative destinations or linear continuations. Deeper nesting recurses (branches of 2.3 → 2.3.1, 2.3.2).
 - **Placement**: the branch row of screen S sits **below S's row** (`y = S.y + frameHeight + 200`), starting at `S.x`, extending right with the normal 160px gap. If several screens on one row branch, their branch rows stack in the reading order of their source screens.
 - **Branch arrows**: one labeled arrow per outgoing path. Vertical from S's bottom edge to the branch screen's top edge, x aligned to the branch's center: `{"type":"arrow","x":<branchCenterX>,"y":<S.y+900>,"points":[[0,0],[0,200]]}`. If the branch screen sits beyond S's right edge, use a single-bend elbow from S's right edge: `"points":[[0,0],[dx,0],[dx,dy]]`. Never route an arrow across a screen frame.
+- **Branch arrow labels**: the 200px band between rows is empty, so the label may be wider than the gap between screens. Center it on the arrow: `width = max(160, ink + 32)`, `x = arrow.x − width / 2`, `"textAlign": "center"`, `y = arrow.y + 88`. Keep neighbouring branch labels ≥ 16px apart; if two collide, shorten them rather than moving them off their arrows.
+- On an **elbow** arrow, label the horizontal leg: `x = arrow.x`, `width = dx`, centered, `y = arrow.y − 28` — and treat `dx` like a gap, i.e. it must satisfy `dx ≥ ink + 32`.
 
 ## Labels on shapes
 
@@ -66,6 +80,6 @@ Left-aligned text inside a container sits at `container.x + padding` and needs t
 
 ## Canvas hygiene
 
-- Keep all screens' frames non-overlapping; arrows live in the 160px gaps.
+- Keep all screens' frames non-overlapping; arrows and their labels live in the gaps, and no label ink may cross a frame edge.
 - IDs: short, readable, unique, and **greppable** — `s2-nav-logo`, `s2-form-email-input`, `s2-btn-save`. Pattern: `s<scene>-<region>-<name>[-part]`, where `<scene>` matches the screen's scene number with dots replaced by `_` (`s2_1-…`). Iteration finds elements by ID with a text search instead of reading the file (see [iteration.md](iteration.md)), so a guessable ID is worth more than a short one.
 - One element per line in the JSON, screens separated by a blank line. Line-addressable files can be patched line by line.

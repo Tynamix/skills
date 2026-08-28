@@ -236,13 +236,14 @@
     {
       "id": "arr1l",
       "type": "text",
-      "x": 1464,
+      "x": 1440,
       "y": 416,
-      "width": 144,
+      "width": 160,
       "height": 20,
       "text": "submit form",
       "fontSize": 16,
       "fontFamily": 5,
+      "textAlign": "center",
       "strokeColor": "#868e96"
     },
     {
@@ -830,13 +831,14 @@
     {
       "id": "arr2l",
       "type": "text",
-      "x": 3064,
+      "x": 3040,
       "y": 416,
-      "width": 184,
+      "width": 160,
       "height": 20,
-      "text": "click Settings",
+      "text": "Settings tab",
       "fontSize": 16,
       "fontFamily": 5,
+      "textAlign": "center",
       "strokeColor": "#868e96"
     },
     {
@@ -1282,13 +1284,14 @@
     {
       "id": "arr3l",
       "type": "text",
-      "x": 2344,
-      "y": 960,
+      "x": 2232,
+      "y": 988,
       "width": 176,
       "height": 20,
       "text": "click Reports",
       "fontSize": 16,
       "fontFamily": 5,
+      "textAlign": "center",
       "strokeColor": "#868e96"
     },
     {
