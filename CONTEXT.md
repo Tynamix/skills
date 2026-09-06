@@ -37,3 +37,11 @@ The width the glyphs of a label actually occupy on screen. Used to size the shap
 **Map**:
 The `<name>.map.md` sidecar next to a wireframe file: a small table of Screens, id prefixes and contents that lets an agent decide what to patch without reading the `.excalidraw` (see ADR-0003). An index, never the source of truth.
 _Avoid_: Manifest, Index, Inhaltsverzeichnis
+
+**Asset**:
+A generated image file produced by the image-generation skill for use in a website or app: hero image, background, illustration, icon, or logo.
+_Avoid_: Bild, Grafik, media file
+
+**Generation prompt**:
+The text sent to the image model. Written for an image model, not a chat model: subject, style, composition, palette, context.
+_Avoid_: Prompt (unqualified), instruction
