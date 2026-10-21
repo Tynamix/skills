@@ -8,6 +8,10 @@ Skills are instructions that an AI agent reads to perform a specific kind of wor
 
 ```
 skills/                     # skills authored in this repo
+  deployment-diagrams/      # cloud and Kubernetes deployments in Excalidraw
+    SKILL.md
+    references/             # platform semantics, layout, icons, JSON, iteration
+    examples/               # editable multi-view example + its sidecar map
   ui-wireframes/            # lo-fi UI wireframes as editable Excalidraw files
     SKILL.md
     references/             # templates, layout arithmetic, iteration protocol
@@ -39,6 +43,28 @@ Key design decisions are recorded as ADRs:
 
 See [skills/ui-wireframes/SKILL.md](skills/ui-wireframes/SKILL.md) for the full workflow, and
 [skills/ui-wireframes/examples/](skills/ui-wireframes/examples/) for a generated wireframe and its map.
+
+## `deployment-diagrams`
+
+Draws **editable deployment diagrams** for Azure, AWS, Google Cloud, Kubernetes, and
+hybrid/multi-cloud systems. Like `ui-wireframes`, it writes Excalidraw JSON directly and
+preserves canvas edits through a sidecar map and surgical patches.
+
+- Official provider/resource icons are embedded in the file, with provenance and usage
+  terms recorded in the map. When unavailable, explicitly reported native labeled cards
+  keep the diagram usable. No icon library or converter is required in the target repo.
+- Ownership, region/zone, network, and orchestration boundaries remain distinct.
+- Numbered overview/detail views, reserved routing corridors, and readable type support
+  complex landing zones and cluster topologies without flattening them into an image.
+- Resource groups and bound arrow endpoints remain editable. Icon artwork itself is an
+  embedded image, not a collection of editable vector paths.
+
+Example requests: "Draw our Azure landing zone in Excalidraw", "Create an AWS multi-AZ
+deployment diagram", or "Zeichne ein Deploymentdiagramm fuer GKE mit Kubernetes-Detailansicht".
+
+See [skills/deployment-diagrams/SKILL.md](skills/deployment-diagrams/SKILL.md) and the
+[multi-view example](skills/deployment-diagrams/examples/cloud-platforms.excalidraw) with its
+[map](skills/deployment-diagrams/examples/cloud-platforms.map.md).
 
 ## Domain vocabulary
 
